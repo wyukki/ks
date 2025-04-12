@@ -1,4 +1,4 @@
-package kotlin.spring.ks
+package kt.spring.ks
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

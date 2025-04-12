@@ -1,4 +1,4 @@
-package kotlin.spring.ks
+package kt.spring.ks
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class KsApplication
 
 fun main(args: Array<String>) {
-	runApplication<KsApplication>(*args)
+    runApplication<KsApplication>(*args)
 }
