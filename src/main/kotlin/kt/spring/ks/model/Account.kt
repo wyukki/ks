@@ -1,7 +1,8 @@
 package kt.spring.ks.model
 
 
-data class Bank (
+data class Account (
+    val id: String,
     val accountNumber: AccountNumber,
-    private val transactionFee: Double
+    val customer: Customer
 )
