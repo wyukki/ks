@@ -10,19 +10,30 @@ import org.springframework.test.web.servlet.get
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class BankControllerTest {
+internal class AccountDtoControllerTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @Test
-    fun testGetBanks() {
-        mockMvc.get("/api/v1/banks")
+    fun testGetAccounts() {
+        mockMvc.get("/api/v1/accounts")
             .andDo { print() }
             .andExpect {
                 status { isOk() }
                 content { contentType(MediaType.APPLICATION_JSON) }
-                jsonPath("$[0].accountNumber.prefix") { value("123") }
+                jsonPath("accounts[0].id") { value("1") }
+            }
+    }
+
+    @Test
+    fun testGetAccount() {
+        mockMvc.get("/api/v1/accounts/1")
+            .andDo { print() }
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+                jsonPath("accountDto.accountNumber.core") { value("123456789") }
             }
     }
 }
