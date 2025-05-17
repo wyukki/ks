@@ -2,6 +2,7 @@ package kt.spring.ks.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kt.spring.ks.controller.dto.v1.CreateAccountV1Request
+import kt.spring.ks.controller.dto.v1.UpdateAccountV1Request
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 import java.util.regex.Pattern
 
@@ -77,7 +79,8 @@ internal class AccountDtoControllerTest @Autowired constructor(val mockMvc: Mock
                     ),
                     accountNumber = CreateAccountV1Request.CreateAccountV1RequestAccount.CreateAccountV1RequestAccountNumber(
                         "123", "0100", null, "CZ0000001230100"
-                    )
+                    ),
+                    accountName = "My account"
                 )
             )
 
@@ -89,9 +92,52 @@ internal class AccountDtoControllerTest @Autowired constructor(val mockMvc: Mock
                 .andExpect {
                     status { isCreated() }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    jsonPath("id") {value(Matchers.matchesPattern(ACCOUNT_ID_PATTERN))}
+                    jsonPath("id") { value(Matchers.matchesPattern(ACCOUNT_ID_PATTERN)) }
                 }
         }
     }
 
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("PATCH /api/v1/accounts/{}")
+    inner class UpdateAccountTests {
+        @Test
+        fun testUpdateAccountOk() {
+            val accountId = "1"
+            val requestBody = UpdateAccountV1Request(
+                accountName = "New account name",
+            )
+
+            mockMvc.patch("$ACCOUNTS_URL/$accountId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(requestBody)
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("account.accountName") { value("New account name") }
+                }
+        }
+
+        @Test
+        fun testUpdateAccount_NotExisting() {
+            val accountId = "does_not_exists"
+
+            val requestBody = UpdateAccountV1Request(
+                accountName = "New account name",
+            )
+
+            mockMvc.patch("$ACCOUNTS_URL/$accountId") {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(requestBody)
+            }
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("message") { value("Account with id $accountId doesn't exist") }
+                }
+        }
+    }
 }

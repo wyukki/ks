@@ -20,6 +20,7 @@ interface AccountServiceMapper {
     fun toCustomerDto(customer: Customer): CustomerDto
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "accountName", source = "account.accountName")
     @Mapping(target = "accountNumber", source = "account.accountNumber")
     @Mapping(target = "customer", source = "account.customer")
     fun toAccount(createAccountV1Request: CreateAccountV1Request): Account
@@ -33,4 +34,6 @@ interface AccountServiceMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "name", source = "name")
     fun toCustomer(customer: CreateAccountV1Request.CreateAccountV1RequestAccount.CreateAccountV1RequestCustomer) : Customer
+
+
 }

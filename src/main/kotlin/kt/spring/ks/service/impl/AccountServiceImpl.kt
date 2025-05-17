@@ -1,6 +1,7 @@
 package kt.spring.ks.service.impl
 
 import kt.spring.ks.controller.dto.v1.CreateAccountV1Request
+import kt.spring.ks.controller.dto.v1.UpdateAccountV1Request
 import kt.spring.ks.service.dto.AccountDto
 import kt.spring.ks.exception.NotFoundException
 import kt.spring.ks.mapper.AccountServiceMapper
@@ -19,4 +20,8 @@ class AccountServiceImpl(private val repository: AccountRepository, private val 
 
     override fun createAccount(createAccountRequest: CreateAccountV1Request): String =
         repository.createAccount(mapper.toAccount(createAccountRequest))
+
+    override fun updateAccount(accountId: String, updateAccountRequest: UpdateAccountV1Request): AccountDto =
+        repository.updateAccount(accountId, updateAccountRequest.accountName)?.let { mapper.toAccountDto(it) }
+            ?: throw NotFoundException("Account with id $accountId doesn't exist")
 }
