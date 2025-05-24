@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.patch
-import org.springframework.test.web.servlet.post
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.web.servlet.*
 import java.util.regex.Pattern
 
 private const val ACCOUNTS_URL = "/api/v1/accounts"
@@ -23,7 +21,7 @@ private val ACCOUNT_ID_PATTERN = Pattern.compile("[0-9]+")
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class AccountDtoControllerTest @Autowired constructor(val mockMvc: MockMvc, val objectMapper: ObjectMapper) {
+internal class AccountControllerTest @Autowired constructor(val mockMvc: MockMvc, val objectMapper: ObjectMapper) {
 
 
     @Test
@@ -132,6 +130,44 @@ internal class AccountDtoControllerTest @Autowired constructor(val mockMvc: Mock
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(requestBody)
             }
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("message") { value("Account with id $accountId doesn't exist") }
+                }
+        }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("DELETE /api/v1/accounts/{}")
+    inner class DeleteAccountTests {
+        @Test
+        @DirtiesContext
+        fun testDeleteAccountOk() {
+            val accountId = "1"
+
+            mockMvc.delete("$ACCOUNTS_URL/$accountId")
+                .andDo { print() }
+                .andExpect {
+                    status { isNoContent() }
+                }
+
+            mockMvc.get("$ACCOUNTS_URL/$accountId")
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                    jsonPath("message") { value("Account with id $accountId doesn't exist") }
+                }
+        }
+
+        @Test
+        fun testDeleteAccount_NotExisting() {
+            val accountId = "does_not_exists"
+
+            mockMvc.delete("$ACCOUNTS_URL/$accountId")
                 .andDo { print() }
                 .andExpect {
                     status { isNotFound() }

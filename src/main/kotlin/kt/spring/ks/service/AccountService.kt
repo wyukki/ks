@@ -10,4 +10,5 @@ interface AccountService {
     fun getAccount(id: String): AccountDto
     fun createAccount(createAccountRequest: CreateAccountV1Request): String
     fun updateAccount(accountId: String, updateAccountRequest: UpdateAccountV1Request): AccountDto
+    fun deleteAccount(accountId: String)
 }

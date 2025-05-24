@@ -12,7 +12,7 @@ class AccountControllerAdvice {
 
     @ExceptionHandler(Exception::class)
     fun handleGenericException(e: Exception): ResponseEntity<UserError> = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(e.message?.let { UserError(it, HttpStatus.BAD_REQUEST.value()) })
+        .body(e.message?.let { UserError(it, HttpStatus.INTERNAL_SERVER_ERROR.value()) })
 
     @ExceptionHandler(NotFoundException::class)
     fun handleNotFoundException(e: NotFoundException): ResponseEntity<UserError> =
