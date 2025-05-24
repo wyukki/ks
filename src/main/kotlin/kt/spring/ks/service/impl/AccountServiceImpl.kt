@@ -24,4 +24,8 @@ class AccountServiceImpl(private val repository: AccountRepository, private val 
     override fun updateAccount(accountId: String, updateAccountRequest: UpdateAccountV1Request): AccountDto =
         repository.updateAccount(accountId, updateAccountRequest.accountName)?.let { mapper.toAccountDto(it) }
             ?: throw NotFoundException("Account with id $accountId doesn't exist")
+
+    override fun deleteAccount(accountId: String): Unit =
+        repository.deleteAccount(accountId)?.let { }
+            ?: throw NotFoundException("Account with id $accountId doesn't exist")
 }

@@ -32,7 +32,7 @@ class MockAccountRepositoryImpl : AccountRepository {
 
     companion object {
         @JvmStatic
-        var idSequence: Int = 4;
+        var idSequence: Int = 4
     }
 
     override fun getAccounts(): Collection<Account> {
@@ -55,4 +55,9 @@ class MockAccountRepositoryImpl : AccountRepository {
     override fun updateAccount(accountId: String, newAccountName: String): Account? =
         accounts.find { it.id == accountId }?.let { it.accountName = newAccountName; it }
 
+    override fun deleteAccount(accountId: String): Account? =
+        accounts.firstOrNull { it.id == accountId }?.let {
+            accounts.remove(it)
+            it
+        }
 }

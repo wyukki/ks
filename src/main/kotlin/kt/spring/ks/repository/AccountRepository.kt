@@ -7,4 +7,5 @@ interface AccountRepository {
     fun getAccount(id: String): Account?
     fun createAccount(account: Account): String
     fun updateAccount(accountId: String, newAccountName: String): Account?
+    fun deleteAccount(accountId: String): Account?
 }
